@@ -77,7 +77,7 @@ namespace DatingApp.API
 
                 );
             }
-            seeder.SeedUser();
+            //seeder.SeedUser();
              app.UseCors(x=> x.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin().AllowCredentials());
             app.UseAuthentication();
             app.UseMvc();
