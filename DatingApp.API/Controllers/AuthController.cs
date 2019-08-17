@@ -9,6 +9,7 @@ using DatingApp.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using AutoMapper;
 
 namespace DatingApp.API.Controllers
 {
@@ -18,11 +19,13 @@ namespace DatingApp.API.Controllers
     {
         private readonly IAuthRepository _repo;
         private readonly IConfiguration _config;
+        private readonly IMapper _mapper;
 
-        public AuthController(IAuthRepository repo,IConfiguration config)
+        public AuthController(IAuthRepository repo,IConfiguration config, IMapper mapper)
         {
             _repo = repo;
             _config = config;
+            _mapper = mapper;
         }
          [HttpPost("register")]
         public async Task<IActionResult> Register(UserForRegisterDtos userForRegisterDtos)
@@ -65,12 +68,16 @@ namespace DatingApp.API.Controllers
             Expires = DateTime.Now.AddDays(1),
             SigningCredentials = creds
 
-        };
+        }; 
         var tokenHandler = new JwtSecurityTokenHandler();
 
         var token = tokenHandler.CreateToken(tokenDiscriptor);
 
-        return Ok(new { token = tokenHandler.WriteToken(token)});
+        var user = _mapper.Map<UserForListDtos>(userFromRepo);
+
+        return Ok(new { token = tokenHandler.WriteToken(token),
+        user
+        });
         }
     }
 }
